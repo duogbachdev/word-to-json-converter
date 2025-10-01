@@ -8,9 +8,9 @@ export default function WordToJsonConverter() {
   const [debugInfo, setDebugInfo] = useState('');
   const [thuTu, setThuTu] = useState(1);
   const [dangThuc, setDangThuc] = useState(1);
-  const [idDeThi, setIdDeThi] = useState('7b3a818d-4b4e-4ca6-8e8f-0acd786cd0e7');
-  const [idMonHoc, setIdMonHoc] = useState('dcb84ca0-0b97-4091-afab-6d6ca8ce1f44');
-  const [idTrangThai, setIdTrangThai] = useState('0233ba05-9121-41a6-8d2b-325a4e8b7a41');
+  const [idDeThi, setIdDeThi] = useState('');
+  const [idMonHoc, setIdMonHoc] = useState('');
+  const [idTrangThai, setIdTrangThai] = useState('');
   const [allQuestions, setAllQuestions] = useState([]);
   const [batchMode, setBatchMode] = useState(false);
 
