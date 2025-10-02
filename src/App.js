@@ -853,7 +853,7 @@ export default function WordToJsonConverter() {
               placeholder="Paste một câu hỏi để convert thủ công..."
               className="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm"
             />
-<div className="grid grid-cols-2 gap-3 mt-3">
+            <div className="grid grid-cols-2 gap-3 mt-3">
               <button
                 onClick={convertToJson}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
