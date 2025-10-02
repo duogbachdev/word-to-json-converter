@@ -13,6 +13,8 @@ export default function WordToJsonConverter() {
   const [idTrangThai, setIdTrangThai] = useState('');
   const [allQuestions, setAllQuestions] = useState([]);
   const [batchMode, setBatchMode] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [allPayloads, setAllPayloads] = useState([]);
   
   // API Config
   const [apiEndpoint, setApiEndpoint] = useState('');
@@ -305,18 +307,60 @@ export default function WordToJsonConverter() {
     }
   };  
 
-  const convertAllToJson = () => {
-    if (allQuestions.length === 0) {
-      alert('Chưa import file nào!');
-      return;
-    }
+  // const convertAllToJson = () => {
+  //   if (allQuestions.length === 0) {
+  //     alert('Chưa import file nào!');
+  //     return;
+  //   }
 
-    const allPayloads = allQuestions.map(q => 
-      parseQuestion(q.text, q.number, q.dangThuc)
-    );
+  //   const allPayloads = allQuestions.map(q => 
+  //     parseQuestion(q.text, q.number, q.dangThuc)
+  //   );
     
-    setJsonOutput(JSON.stringify(allPayloads, null, 2));
-    setDebugInfo(`✅ Đã convert ${allPayloads.length} câu hỏi thành công!`);
+  //   setJsonOutput(JSON.stringify(allPayloads, null, 2));
+  //   setDebugInfo(`✅ Đã convert ${allPayloads.length} câu hỏi thành công!`);
+  // };
+
+
+  const convertAllToJson = () => {
+  if (allQuestions.length === 0) {
+    alert('Chưa import file nào!');
+    return;
+  }
+
+  const payloads = allQuestions.map(q => 
+    parseQuestion(q.text, q.number, q.dangThuc)
+  );
+  
+  setAllPayloads(payloads);
+  setCurrentQuestionIndex(0);
+  setJsonOutput(JSON.stringify(payloads[0], null, 2));
+  setDebugInfo(`✅ Đã convert ${payloads.length} câu hỏi!\n\n📋 Hiện đang hiển thị: Câu ${payloads[0].ThuTu}/${payloads.length}\n\nDùng nút ◀️ ▶️ để chuyển câu, hoặc click "Xem toàn bộ Array" để xem JSON array.`);
+  };
+
+  const showPreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      const newIndex = currentQuestionIndex - 1;
+      setCurrentQuestionIndex(newIndex);
+      setJsonOutput(JSON.stringify(allPayloads[newIndex], null, 2));
+      setDebugInfo(`📋 Câu ${allPayloads[newIndex].ThuTu}/${allPayloads.length}`);
+    }
+  };
+
+  const showNextQuestion = () => {
+    if (currentQuestionIndex < allPayloads.length - 1) {
+      const newIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(newIndex);
+      setJsonOutput(JSON.stringify(allPayloads[newIndex], null, 2));
+      setDebugInfo(`📋 Câu ${allPayloads[newIndex].ThuTu}/${allPayloads.length}`);
+    }
+  };
+
+  const showAllAsArray = () => {
+    if (allPayloads.length > 0) {
+      setJsonOutput(JSON.stringify(allPayloads, null, 2));
+      setDebugInfo(`📋 Hiển thị toàn bộ ${allPayloads.length} câu dưới dạng Array\n\n⚠️ Lưu ý: API không nhận array, chỉ dùng để xem hoặc lưu file!`);
+    }
   };
 
   const convertToJson = () => {
@@ -668,20 +712,50 @@ export default function WordToJsonConverter() {
                     <span>• DangThuc 2: {allQuestions.filter(q => q.dangThuc === 2).length} câu</span>
                   </div>
                 </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={convertAllToJson}
-                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all text-lg"
-                  >
-                    🎯 Convert All ({allQuestions.length} câu)
-                  </button>
-                  <button
-                    onClick={clearAll}
-                    className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                    Clear All
-                  </button>
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <button
+                      onClick={convertAllToJson}
+                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all text-lg"
+                    >
+                      🎯 Convert All ({allQuestions.length} câu)
+                    </button>
+                    <button
+                      onClick={clearAll}
+                      className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                      Clear All
+                    </button>
+                  </div>
+                  
+                  {allPayloads.length > 0 && (
+                    <div className="flex gap-2 items-center p-3 bg-blue-50 border border-blue-300 rounded-lg">
+                      <button
+                        onClick={showPreviousQuestion}
+                        disabled={currentQuestionIndex === 0}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold rounded-lg transition-all"
+                      >
+                        ◀️ Trước
+                      </button>
+                      <span className="flex-1 text-center font-bold text-blue-900">
+                        Câu {allPayloads[currentQuestionIndex]?.ThuTu} / {allPayloads.length}
+                      </span>
+                      <button
+                        onClick={showNextQuestion}
+                        disabled={currentQuestionIndex === allPayloads.length - 1}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold rounded-lg transition-all"
+                      >
+                        Sau ▶️
+                      </button>
+                      <button
+                        onClick={showAllAsArray}
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-all"
+                      >
+                        📦 Xem Array
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -779,12 +853,26 @@ export default function WordToJsonConverter() {
               placeholder="Paste một câu hỏi để convert thủ công..."
               className="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm"
             />
-            <button
-              onClick={convertToJson}
-              className="w-full mt-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg"
-            >
-              Convert Single
-            </button>
+<div className="grid grid-cols-2 gap-3 mt-3">
+              <button
+                onClick={convertToJson}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+              >
+                Convert
+              </button>
+              <button
+                onClick={() => {
+                  convertToJson();
+                  setTimeout(() => {
+                    setThuTu(thuTu + 1);
+                    setWordText('');
+                  }, 100);
+                }}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+              >
+                Convert & Next
+              </button>
+            </div>
             
             {debugInfo && (
               <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs font-mono whitespace-pre-wrap">
