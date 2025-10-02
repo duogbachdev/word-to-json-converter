@@ -107,6 +107,7 @@ export default function WordToJsonConverter() {
             DapAnB: answers.DapAnB || null,
             DapAnC: answers.DapAnC || null,
             DapAnD: answers.DapAnD || null,
+            Diem: 0.25,
             DapAn: null
           };
         } else {
@@ -153,6 +154,7 @@ export default function WordToJsonConverter() {
             DapAnB: answers.DapAnB || null,
             DapAnC: answers.DapAnC || null,
             DapAnD: answers.DapAnD || null,
+            Diem: 0.25,
             DapAn: null
           };
         }
