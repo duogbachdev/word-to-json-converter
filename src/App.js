@@ -9,6 +9,7 @@ export default function WordToJsonConverter() {
   const [thuTu, setThuTu] = useState(1);
   const [dangThuc, setDangThuc] = useState(1);
   const [idDeThi, setIdDeThi] = useState('');
+  const [soId, setSoId] = useState('');
   const [idMonHoc, setIdMonHoc] = useState('');
   const [idTrangThai, setIdTrangThai] = useState('');
   const [allQuestions, setAllQuestions] = useState([]);
@@ -240,6 +241,7 @@ export default function WordToJsonConverter() {
         Active: true,
         NgayTao: new Date().toISOString().split('.')[0],
         IdDeThi: idDeThi,
+        SoId: soId,
         IdMonHoc: idMonHoc,
         DangThuc: detectedDangThuc,
         PhanDongDapAn: 1,
@@ -551,6 +553,7 @@ export default function WordToJsonConverter() {
         Active: true,
         NgayTao: new Date().toISOString().split('.')[0],
         IdDeThi: idDeThi,
+        SoId: soId,
         IdMonHoc: idMonHoc,
         DangThuc: dangThuc,
         PhanDongDapAn: 1,
@@ -820,6 +823,18 @@ export default function WordToJsonConverter() {
                 type="text"
                 value={idDeThi}
                 onChange={(e) => setIdDeThi(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                SoId
+              </label>
+              <input
+                type="text"
+                value={soId}
+                onChange={(e) => setSoId(e.target.value)}
+                placeholder="Optional"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"
               />
             </div>
