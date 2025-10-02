@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, FileText, Download, AlertCircle, Plus, Minus, Upload, Trash2 } from 'lucide-react';
+import { Copy, FileText, Download, AlertCircle, Plus, Minus, Upload, Trash2, Send } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
 export default function WordToJsonConverter() {
@@ -13,6 +13,13 @@ export default function WordToJsonConverter() {
   const [idTrangThai, setIdTrangThai] = useState('');
   const [allQuestions, setAllQuestions] = useState([]);
   const [batchMode, setBatchMode] = useState(false);
+  
+  // API Config
+  const [apiEndpoint, setApiEndpoint] = useState('');
+  const [apiMethod, setApiMethod] = useState('POST');
+  const [apiHeaders, setApiHeaders] = useState('{\n  "Content-Type": "application/json"\n}');
+  const [apiResponse, setApiResponse] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   const formatDeBaiToHtml = (text) => {
     text = text.replace(/\t/g, '            ');
@@ -259,11 +266,9 @@ export default function WordToJsonConverter() {
       const result = await mammoth.extractRawText({ arrayBuffer });
       const text = result.value;
       
-      // DEBUG: Show first 500 chars
       console.log('Extracted text preview:', text.substring(0, 500));
       setDebugInfo('📝 Text preview:\n' + text.substring(0, 500) + '\n\n...(total: ' + text.length + ' chars)');
       
-      // Split by "Câu" pattern - flexible regex to match: **Câu 1.** or **Câu 1. ** or Câu 1.
       const questionPattern = /(?:\*\*)?Câu\s+(\d+)\.(?:\s*\*\*)?/g;
       const matches = [...text.matchAll(questionPattern)];
       
@@ -279,9 +284,7 @@ export default function WordToJsonConverter() {
         const questionText = text.substring(startIdx, endIdx).trim();
         const questionNumber = parseInt(matches[i][1]);
         
-        // Auto-detect DangThuc
         let detectedDangThuc = 1;
-        // More robust detection - check for lowercase letter patterns
         if (questionText.match(/\n\s*[a-d]\)/)) {
           detectedDangThuc = 2;
         }
@@ -557,6 +560,71 @@ export default function WordToJsonConverter() {
     setDebugInfo('');
     setAllQuestions([]);
     setBatchMode(false);
+    setApiResponse('');
+  };
+
+  const sendToApi = async () => {
+    if (!jsonOutput) {
+      alert('Chưa có JSON để gửi!');
+      return;
+    }
+    
+    if (!apiEndpoint) {
+      alert('Vui lòng nhập API Endpoint!');
+      return;
+    }
+
+    setIsSending(true);
+    setApiResponse('');
+
+    try {
+      let headers = {};
+      try {
+        headers = JSON.parse(apiHeaders);
+      } catch (e) {
+        alert('Headers không đúng định dạng JSON!');
+        setIsSending(false);
+        return;
+      }
+
+      const response = await fetch(apiEndpoint, {
+        method: apiMethod,
+        headers: headers,
+        body: jsonOutput
+      });
+
+      const responseText = await response.text();
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch {
+        responseData = responseText;
+      }
+
+      const result = {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        data: responseData
+      };
+
+      setApiResponse(JSON.stringify(result, null, 2));
+      
+      if (response.ok) {
+        alert('✅ Gửi API thành công!');
+      } else {
+        alert('⚠️ API trả về lỗi: ' + response.status);
+      }
+    } catch (error) {
+      const errorResult = {
+        error: error.message,
+        type: error.name
+      };
+      setApiResponse(JSON.stringify(errorResult, null, 2));
+      alert('❌ Lỗi khi gửi API: ' + error.message);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -754,8 +822,71 @@ export default function WordToJsonConverter() {
               value={jsonOutput}
               readOnly
               placeholder="JSON output sẽ xuất hiện ở đây..."
-              className="w-full h-96 px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm"
+              className="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm"
             />
+            
+            <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-lg">
+              <div className="flex items-center gap-2 mb-4">
+                <Send className="w-5 h-5 text-purple-600" />
+                <h3 className="text-lg font-bold text-purple-900">🚀 Gửi trực tiếp đến API</h3>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <select
+                    value={apiMethod}
+                    onChange={(e) => setApiMethod(e.target.value)}
+                    className="px-3 py-2 border border-purple-300 rounded-lg font-semibold bg-white"
+                  >
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                  </select>
+                  <input
+                    type="text"
+                    value={apiEndpoint}
+                    onChange={(e) => setApiEndpoint(e.target.value)}
+                    placeholder="https://api.example.com/endpoint"
+                    className="flex-1 px-4 py-2 border border-purple-300 rounded-lg text-sm"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    Headers (JSON format):
+                  </label>
+                  <textarea
+                    value={apiHeaders}
+                    onChange={(e) => setApiHeaders(e.target.value)}
+                    placeholder='{"Content-Type": "application/json", "Authorization": "Bearer token"}'
+                    className="w-full px-3 py-2 border border-purple-300 rounded-lg font-mono text-xs"
+                    rows="3"
+                  />
+                </div>
+                
+                <button
+                  onClick={sendToApi}
+                  disabled={!jsonOutput || isSending}
+                  className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
+                >
+                  <Send className="w-5 h-5" />
+                  {isSending ? 'Đang gửi...' : 'Send Request'}
+                </button>
+              </div>
+            </div>
+            
+            {apiResponse && (
+              <div className="mt-4">
+                <h4 className="text-sm font-bold text-gray-800 mb-2">API Response:</h4>
+                <textarea
+                  value={apiResponse}
+                  readOnly
+                  className="w-full h-48 px-4 py-3 border border-green-300 rounded-lg bg-green-50 font-mono text-xs"
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -779,6 +910,18 @@ export default function WordToJsonConverter() {
                 <li>Paste một câu hỏi vào ô Manual Input</li>
                 <li>Click "Convert Single"</li>
                 <li>Copy JSON và tiếp tục với câu tiếp theo</li>
+              </ol>
+            </div>
+            
+            <div className="p-3 bg-purple-100 border border-purple-300 rounded">
+              <h4 className="font-bold text-purple-900 mb-2">🌐 Gửi API (như Postman):</h4>
+              <ol className="list-decimal list-inside space-y-1 text-purple-900 text-sm">
+                <li>Sau khi convert JSON, cuộn xuống phần "Gửi trực tiếp đến API"</li>
+                <li>Chọn HTTP Method (POST/PUT/PATCH)</li>
+                <li>Nhập URL endpoint của API</li>
+                <li>Điều chỉnh Headers nếu cần (thêm Authorization token, v.v.)</li>
+                <li>Click "Send Request" để gửi</li>
+                <li>Xem kết quả trả về ngay bên dưới</li>
               </ol>
             </div>
           </div>
