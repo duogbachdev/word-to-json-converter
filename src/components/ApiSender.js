@@ -10,11 +10,15 @@ const ApiSender = ({
   isSending,
   jsonOutput,
   corsProxy,
+  batchMode,
+  allPayloads,
+  batchProgress,
   onEndpointChange,
   onMethodChange,
   onHeadersChange,
   onCorsProxyChange,
-  onSend
+  onSend,
+  onSendBatch
 }) => {
   return (
     <>
@@ -112,14 +116,53 @@ const ApiSender = ({
             />
           </div>
           
-          <button
-            onClick={onSend}
-            disabled={!jsonOutput || isSending}
-            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
-          >
-            <Send className="w-5 h-5" />
-            {isSending ? 'Đang gửi...' : 'Send Request'}
-          </button>
+          {batchMode && allPayloads.length > 0 ? (
+            <div className="space-y-2">
+              <button
+                onClick={onSendBatch}
+                disabled={isSending}
+                className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
+              >
+                <Send className="w-5 h-5" />
+                {isSending ? 'Đang gửi...' : `Gửi từng câu (${allPayloads.length} câu)`}
+              </button>
+
+              {isSending && batchProgress ? (
+                <div className="bg-blue-50 border border-blue-300 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold text-blue-800">
+                      Đang gửi: {batchProgress.current}/{batchProgress.total}
+                    </span>
+                    <span className="text-sm text-blue-600">
+                      {batchProgress.elapsed}s
+                    </span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-blue-600 mt-2 text-center">
+                    ⏱️ Ước tính còn: {batchProgress.remaining}s
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-600 text-center">
+                  ⚡ Sẽ gửi từng câu một (loop) • Thời gian: ~{Math.ceil(allPayloads.length * 0.3)}s
+                </p>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={onSend}
+              disabled={!jsonOutput || isSending}
+              className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
+            >
+              <Send className="w-5 h-5" />
+              {isSending ? 'Đang gửi...' : 'Send Request'}
+            </button>
+          )}
         </div>
       </div>
       

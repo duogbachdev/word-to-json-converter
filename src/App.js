@@ -34,6 +34,7 @@ const WordToJsonConverter = () => {
   const [apiResponse, setApiResponse] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [corsProxy, setCorsProxy] = useState(DEFAULT_PROXY); // Default: CORS Anywhere
+  const [batchProgress, setBatchProgress] = useState(null);
 
   // Helper to get config object
   const getConfig = () => ({
@@ -220,6 +221,135 @@ const WordToJsonConverter = () => {
     }, 100);
   };
 
+  const handleSendBatch = async () => {
+    if (!allPayloads || allPayloads.length === 0) {
+      alert('Chưa có câu hỏi nào để gửi!');
+      return;
+    }
+
+    if (!apiEndpoint) {
+      alert('Vui lòng nhập API Endpoint!');
+      return;
+    }
+
+    const confirmSend = window.confirm(
+      `Bạn có chắc muốn gửi ${allPayloads.length} câu hỏi?\n\n` +
+      `Mỗi câu sẽ được gửi riêng lẻ (không phải array).\n` +
+      `Quá trình này có thể mất vài giây.`
+    );
+
+    if (!confirmSend) return;
+
+    setIsSending(true);
+    setApiResponse('');
+    setBatchProgress(null);
+
+    const results = [];
+    let successCount = 0;
+    let errorCount = 0;
+    const startTime = Date.now();
+
+    try {
+      // Wrap URL với CORS proxy nếu được chọn
+      const finalEndpoint = wrapWithProxy(apiEndpoint, corsProxy);
+
+      // Log để debug
+      if (corsProxy) {
+        console.log('Original URL:', apiEndpoint);
+        console.log('Proxied URL:', finalEndpoint);
+      }
+
+      // Loop qua từng câu hỏi
+      for (let i = 0; i < allPayloads.length; i++) {
+        const payload = allPayloads[i];
+        const payloadJson = JSON.stringify(payload);
+
+        // Update progress
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const avgTimePerRequest = i > 0 ? elapsed / i : 0.3;
+        const remaining = Math.ceil((allPayloads.length - i) * avgTimePerRequest);
+
+        setBatchProgress({
+          current: i,
+          total: allPayloads.length,
+          elapsed: elapsed,
+          remaining: remaining
+        });
+
+        try {
+          console.log(`Đang gửi câu ${i + 1}/${allPayloads.length}...`);
+
+          const result = await sendToApi(finalEndpoint, apiMethod, apiHeaders, payloadJson);
+
+          results.push({
+            index: i + 1,
+            thuTu: payload.ThuTu,
+            status: result.status,
+            ok: result.ok,
+            message: result.ok ? 'Success' : 'Failed'
+          });
+
+          if (result.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+
+          // Delay nhỏ giữa các requests để tránh rate limit
+          if (i < allPayloads.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+          }
+
+        } catch (error) {
+          errorCount++;
+          results.push({
+            index: i + 1,
+            thuTu: payload.ThuTu,
+            status: 'ERROR',
+            ok: false,
+            message: error.message
+          });
+        }
+      }
+
+      // Tính tổng thời gian
+      const totalTime = Math.floor((Date.now() - startTime) / 1000);
+
+      // Hiển thị kết quả
+      const summary = {
+        total: allPayloads.length,
+        success: successCount,
+        error: errorCount,
+        totalTime: `${totalTime}s`,
+        avgTimePerRequest: `${(totalTime / allPayloads.length).toFixed(2)}s`,
+        results: results
+      };
+
+      setApiResponse(JSON.stringify(summary, null, 2));
+
+      alert(
+        `✅ Hoàn thành!\n\n` +
+        `Tổng: ${allPayloads.length} câu\n` +
+        `Thành công: ${successCount} câu\n` +
+        `Lỗi: ${errorCount} câu\n` +
+        `Thời gian: ${totalTime}s (TB: ${(totalTime / allPayloads.length).toFixed(2)}s/câu)\n\n` +
+        `Xem chi tiết trong API Response bên dưới.`
+      );
+
+    } catch (error) {
+      const errorResult = {
+        error: error.message,
+        type: error.name,
+        results: results
+      };
+      setApiResponse(JSON.stringify(errorResult, null, 2));
+      alert('❌ Lỗi khi gửi batch: ' + error.message);
+    } finally {
+      setIsSending(false);
+      setBatchProgress(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <div className="max-w-7xl mx-auto">
@@ -278,11 +408,15 @@ const WordToJsonConverter = () => {
               isSending={isSending}
               jsonOutput={jsonOutput}
               corsProxy={corsProxy}
+              batchMode={batchMode}
+              allPayloads={allPayloads}
+              batchProgress={batchProgress}
               onEndpointChange={setApiEndpoint}
               onMethodChange={setApiMethod}
               onHeadersChange={setApiHeaders}
               onCorsProxyChange={setCorsProxy}
               onSend={handleSendToApi}
+              onSendBatch={handleSendBatch}
             />
           </div>
         </div>

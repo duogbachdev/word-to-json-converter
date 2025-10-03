@@ -1,5 +1,58 @@
 # Changelog - Word to JSON Converter
 
+## [2.2.0] - 2025-01-03
+
+### 🚀 Batch API Sending
+
+#### ✨ Tính năng mới
+
+**Gửi hàng loạt (Batch Send):**
+- ✅ Gửi từng câu hỏi một (loop) thay vì gửi array
+- ✅ Tự động delay 300ms giữa các requests
+- ✅ **Progress bar real-time** với thời gian
+- ✅ **Ước tính thời gian còn lại**
+- ✅ **Tổng thời gian** và **thời gian TB/câu**
+- ✅ Tổng kết: Thành công/Lỗi
+- ✅ Nút riêng màu xanh khi ở batch mode
+
+**UI Features:**
+- Progress bar animation
+- "Đang gửi: X/Y" + thời gian đã chạy
+- "Ước tính còn: Zs"
+- Ước tính thời gian trước khi gửi: "~Xs"
+
+**Cách hoạt động:**
+```javascript
+const startTime = Date.now();
+
+for (let i = 0; i < allPayloads.length; i++) {
+  // Update progress
+  const elapsed = (Date.now() - startTime) / 1000;
+  const remaining = (total - i) * avgTime;
+  setBatchProgress({ current: i, total, elapsed, remaining });
+
+  // Send
+  await sendToApi(endpoint, method, headers, payload[i]);
+  await delay(300ms);
+}
+
+// Summary với thời gian
+const totalTime = (Date.now() - startTime) / 1000;
+```
+
+**Cập nhật:**
+- `src/App.js` - Thêm function `handleSendBatch()`
+- `src/components/ApiSender.js` - Thêm nút "Gửi từng câu"
+- `README.md` - Thêm hướng dẫn batch send
+
+**Lợi ích:**
+- ✅ API chỉ nhận single object → Giải quyết được
+- ✅ Tránh rate limit với delay
+- ✅ Track được từng câu thành công/lỗi
+- ✅ Không cần tắt tính năng insert array
+
+---
+
 ## [2.1.1] - 2025-01-03
 
 ### 🔧 CORS Proxy Updates

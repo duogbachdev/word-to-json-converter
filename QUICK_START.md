@@ -59,17 +59,11 @@ Câu 2. Câu hỏi tiếp theo?
 
 ### Gửi API
 
-1. **Convert JSON** (batch hoặc manual)
-
-2. **Setup CORS Proxy (Lần đầu tiên):**
-   - Mở: https://cors-anywhere.herokuapp.com/corsdemo
-   - Click "Request temporary access to the demo server"
-   - Quay lại app (CORS Anywhere đã được chọn sẵn)
-
-3. **Chọn Method:** GET/POST/PUT/PATCH
-
+#### Gửi từng câu (Single)
+1. **Convert JSON** (manual mode)
+2. **Setup CORS Proxy** (lần đầu)
+3. **Chọn Method:** POST/PUT/PATCH
 4. **Nhập URL:** `https://api.example.com/endpoint`
-
 5. **Nhập Headers:**
 ```json
 {
@@ -77,10 +71,16 @@ Câu 2. Câu hỏi tiếp theo?
   "Authorization": "Bearer YOUR_TOKEN"
 }
 ```
-
 6. **Click "Send Request"**
-
 7. **Xem response** bên dưới
+
+#### Gửi hàng loạt (Batch) ⭐ MỚI
+1. **Convert All** (batch import)
+2. **Setup CORS Proxy** (lần đầu)
+3. **Nhập URL và Headers**
+4. **Click "Gửi từng câu (X câu)"** (nút xanh)
+5. **Confirm** → Tự động gửi từng câu
+6. **Xem tổng kết:** Thành công/Lỗi
 
 ---
 

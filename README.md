@@ -102,6 +102,7 @@ Build files sẽ được tạo trong thư mục `build/`
 
 ### Gửi API (như Postman)
 
+#### Gửi từng câu (Single)
 1. Sau khi convert JSON, cuộn xuống phần "Gửi trực tiếp đến API"
 2. **Setup CORS Proxy (Lần đầu tiên):**
    - Mở: https://cors-anywhere.herokuapp.com/corsdemo
@@ -112,6 +113,18 @@ Build files sẽ được tạo trong thư mục `build/`
 5. Điều chỉnh Headers nếu cần (thêm Authorization token, v.v.)
 6. Click "Send Request" để gửi
 7. Xem kết quả trả về ngay bên dưới
+
+#### Gửi hàng loạt (Batch) ⭐ MỚI
+1. Sau khi **Convert All** (batch import)
+2. Setup CORS Proxy như trên
+3. Nhập URL endpoint và Headers
+4. Click **"Gửi từng câu (X câu)"** (nút màu xanh)
+5. Confirm → App sẽ tự động:
+   - Loop qua từng câu hỏi
+   - Gửi từng câu một (không phải array)
+   - Delay 300ms giữa các requests
+   - Hiển thị progress
+6. Xem tổng kết: Thành công/Lỗi
 
 **Lưu ý về CORS:**
 - App mặc định dùng **CORS Anywhere (Heroku)** - đã test và stable

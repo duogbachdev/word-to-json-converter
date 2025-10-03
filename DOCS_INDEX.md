@@ -12,15 +12,20 @@ Tất cả tài liệu của dự án được tổ chức theo mục đích s�
 **Thời gian đọc:** 5 phút
 
 ### 2. [CORS_ANYWHERE_SETUP.md](CORS_ANYWHERE_SETUP.md) ⚡ QUAN TRỌNG
-**Dành cho:** Tất cả người dùng  
-**Nội dung:** Setup CORS Anywhere để gửi API (1 lần duy nhất)  
+**Dành cho:** Tất cả người dùng
+**Nội dung:** Setup CORS Anywhere để gửi API (1 lần duy nhất)
 **Thời gian đọc:** 2 phút
+
+### 3. [BATCH_SEND_GUIDE.md](BATCH_SEND_GUIDE.md) 🚀 MỚI
+**Dành cho:** Người dùng batch import
+**Nội dung:** Hướng dẫn gửi hàng loạt (loop từng câu)
+**Thời gian đọc:** 5 phút
 
 ---
 
 ## 📖 Hướng dẫn sử dụng
 
-### 3. [README.md](README.md) 📘 HƯỚNG DẪN ĐẦY ĐỦ
+### 4. [README.md](README.md) 📘 HƯỚNG DẪN ĐẦY ĐỦ
 **Dành cho:** Tất cả người dùng  
 **Nội dung:**
 - Tính năng đầy đủ
@@ -31,7 +36,7 @@ Tất cả tài liệu của dự án được tổ chức theo mục đích s�
 
 **Thời gian đọc:** 15 phút
 
-### 4. [CORS_GUIDE.md](CORS_GUIDE.md) 🛡️ CORS CHI TIẾT
+### 5. [CORS_GUIDE.md](CORS_GUIDE.md) 🛡️ CORS CHI TIẾT
 **Dành cho:** Người gặp lỗi CORS  
 **Nội dung:**
 - CORS là gì?
