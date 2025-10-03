@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Word to JSON",
+  "name": "Word to JSON Converter - Chuyển đổi câu hỏi Word sang JSON API",
+  "description": "Công cụ chuyển đổi câu hỏi từ file Word (.docx) sang định dạng JSON và gửi trực tiếp đến API",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +11,20 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#4F46E5",
+  "background_color": "#EFF6FF",
+  "categories": ["productivity", "utilities", "education"],
+  "lang": "vi"
 }
