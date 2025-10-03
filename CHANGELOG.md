@@ -1,5 +1,33 @@
 # Changelog - Word to JSON Converter
 
+## [2.1.1] - 2025-01-03
+
+### 🔧 CORS Proxy Updates
+
+#### Cải tiến
+
+**Default to CORS Anywhere:**
+- ✅ Đặt CORS Anywhere làm proxy mặc định (đã test và stable)
+- ✅ Thêm hướng dẫn setup ngay trong UI
+- ✅ Link trực tiếp đến corsdemo để request access
+- ✅ Warning rõ ràng khi chưa setup
+
+**Files mới:**
+- `CORS_ANYWHERE_SETUP.md` - Hướng dẫn setup CORS Anywhere chi tiết
+
+**Cập nhật:**
+- `src/utils/corsProxy.js` - Đặt CORS Anywhere làm default
+- `src/components/ApiSender.js` - Thêm hướng dẫn setup inline
+- `README.md` - Cập nhật hướng dẫn CORS
+- `QUICK_START.md` - Thêm bước setup CORS Anywhere
+- `CORS_GUIDE.md` - Đặt CORS Anywhere lên đầu
+
+**Tested:**
+- ✅ CORS Anywhere hoạt động tốt với vett.edu.vn API
+- ✅ AllOrigins, CORS.SH, ThingProxy là backup options
+
+---
+
 ## [2.1.0] - 2025-01-03
 
 ### 🛡️ CORS Proxy Integration
@@ -8,7 +36,7 @@
 
 **CORS Proxy Support:**
 - ✅ Tích hợp CORS proxy để bypass CORS restrictions
-- ✅ Dropdown chọn proxy (AllOrigins, CORS.SH, ThingProxy, CORS Anywhere)
+- ✅ Dropdown chọn proxy (CORS Anywhere, AllOrigins, CORS.SH, ThingProxy)
 - ✅ Tự động wrap URL qua proxy server
 - ✅ Hỗ trợ cả GET và POST methods
 - ✅ UI màu vàng dễ nhận biết

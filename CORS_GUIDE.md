@@ -29,25 +29,42 @@ App sẽ tự động wrap URL của bạn qua proxy server.
 
 ## 📋 Các CORS Proxy có sẵn
 
-### 1. **AllOrigins** (Khuyên dùng)
-- **URL:** `https://api.allorigins.win/raw?url=`
-- **Ưu điểm:** 
-  - ✅ Không cần đăng ký
-  - ✅ Không giới hạn requests
-  - ✅ Dễ sử dụng
+### 1. **CORS Anywhere (Heroku)** ⭐ KHUYÊN DÙNG
+- **URL:** `https://cors-anywhere.herokuapp.com/`
+- **Ưu điểm:**
+  - ✅ Stable và reliable
+  - ✅ Được test kỹ
+  - ✅ Hỗ trợ tốt
 - **Nhược điểm:**
-  - ⚠️ Public service, có thể chậm
-  - ⚠️ Không phù hợp cho production
+  - ⚠️ Cần request access 1 lần (vài giờ có hiệu lực)
+
+**Cách setup (1 lần duy nhất):**
+1. Mở: https://cors-anywhere.herokuapp.com/corsdemo
+2. Click nút **"Request temporary access to the demo server"**
+3. Thấy message "You now have temporary access..."
+4. Quay lại app và dùng bình thường
+5. Access hết hạn sau vài giờ → Làm lại bước trên
 
 **Ví dụ:**
 ```
 Original: https://admin.vett.edu.vn/api/DSDeThiCauHoi/showPage
-Proxied:  https://api.allorigins.win/raw?url=https://admin.vett.edu.vn/api/DSDeThiCauHoi/showPage
+Proxied:  https://cors-anywhere.herokuapp.com/https://admin.vett.edu.vn/api/DSDeThiCauHoi/showPage
 ```
 
 ---
 
-### 2. **CORS.SH**
+### 2. **AllOrigins** (Backup)
+- **URL:** `https://api.allorigins.win/raw?url=`
+- **Ưu điểm:**
+  - ✅ Không cần đăng ký
+  - ✅ Không giới hạn requests
+- **Nhược điểm:**
+  - ⚠️ Có thể chậm
+  - ⚠️ Không stable bằng CORS Anywhere
+
+---
+
+### 3. **CORS.SH**
 - **URL:** `https://cors.sh/`
 - **Ưu điểm:**
   - ✅ Nhanh
@@ -75,19 +92,13 @@ Proxied:  https://cors.sh/https://admin.vett.edu.vn/api/...
 
 ---
 
-### 4. **CORS Anywhere (Heroku)**
-- **URL:** `https://cors-anywhere.herokuapp.com/`
+### 4. **ThingProxy** (Backup)
+- **URL:** `https://thingproxy.freeboard.io/fetch/`
 - **Ưu điểm:**
-  - ✅ Open source
-  - ✅ Có thể tự host
+  - ✅ Không cần config
 - **Nhược điểm:**
-  - ⚠️ Cần request access trước: https://cors-anywhere.herokuapp.com/corsdemo
-  - ⚠️ Rate limited
-
-**Cách dùng:**
-1. Vào https://cors-anywhere.herokuapp.com/corsdemo
-2. Click "Request temporary access"
-3. Chọn proxy này trong app
+  - ⚠️ Có thể bị rate limit
+  - ⚠️ Không stable
 
 ---
 
@@ -184,10 +195,12 @@ app.UseCors("AllowAll");
 ## 🎯 Khuyến nghị theo use case
 
 ### Development (Local testing)
-✅ **Dùng AllOrigins** hoặc **Browser Extension**
+✅ **CORS Anywhere (Heroku)** - Stable nhất
+✅ **AllOrigins** - Backup option
+✅ **Browser Extension** - Nếu không muốn dùng proxy
 
 ### Staging/Testing
-✅ **Tự host proxy server** hoặc **CORS.SH**
+✅ **CORS Anywhere** hoặc **Tự host proxy server**
 
 ### Production
 ✅ **Yêu cầu backend thêm CORS headers** (best practice)

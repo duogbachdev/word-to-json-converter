@@ -61,8 +61,10 @@ Câu 2. Câu hỏi tiếp theo?
 
 1. **Convert JSON** (batch hoặc manual)
 
-2. **Nếu gặp lỗi CORS:**
-   - Chọn **AllOrigins** từ dropdown CORS Proxy
+2. **Setup CORS Proxy (Lần đầu tiên):**
+   - Mở: https://cors-anywhere.herokuapp.com/corsdemo
+   - Click "Request temporary access to the demo server"
+   - Quay lại app (CORS Anywhere đã được chọn sẵn)
 
 3. **Chọn Method:** GET/POST/PUT/PATCH
 
@@ -89,10 +91,13 @@ Câu 2. Câu hỏi tiếp theo?
 Access to fetch at '...' has been blocked by CORS policy
 ```
 
-### Giải pháp:
-1. Chọn **CORS Proxy** = **AllOrigins**
-2. Gửi lại request
-3. ✅ Done!
+### Giải pháp (Lần đầu tiên):
+1. Mở: https://cors-anywhere.herokuapp.com/corsdemo
+2. Click "Request temporary access to the demo server"
+3. Quay lại app và gửi request
+4. ✅ Done!
+
+**Lưu ý:** Access có hiệu lực vài giờ, hết hạn thì làm lại bước trên.
 
 Chi tiết: [CORS_GUIDE.md](CORS_GUIDE.md)
 

@@ -103,7 +103,10 @@ Build files sẽ được tạo trong thư mục `build/`
 ### Gửi API (như Postman)
 
 1. Sau khi convert JSON, cuộn xuống phần "Gửi trực tiếp đến API"
-2. **Nếu gặp lỗi CORS:** Chọn CORS Proxy từ dropdown (màu vàng)
+2. **Setup CORS Proxy (Lần đầu tiên):**
+   - Mở: https://cors-anywhere.herokuapp.com/corsdemo
+   - Click "Request temporary access to the demo server"
+   - Quay lại app (CORS Anywhere đã được chọn sẵn)
 3. Chọn HTTP Method (GET/POST/PUT/PATCH)
 4. Nhập URL endpoint của API
 5. Điều chỉnh Headers nếu cần (thêm Authorization token, v.v.)
@@ -111,8 +114,8 @@ Build files sẽ được tạo trong thư mục `build/`
 7. Xem kết quả trả về ngay bên dưới
 
 **Lưu ý về CORS:**
-- Nếu thấy lỗi `blocked by CORS policy`, chọn một CORS Proxy
-- Khuyên dùng **AllOrigins** cho testing
+- App mặc định dùng **CORS Anywhere (Heroku)** - đã test và stable
+- Nếu không work, thử đổi sang **AllOrigins** hoặc proxy khác
 - Xem chi tiết tại [CORS_GUIDE.md](CORS_GUIDE.md)
 
 ## 📝 Định dạng câu hỏi
