@@ -9,6 +9,7 @@ import Instructions from './components/Instructions';
 import { parseQuestion } from './utils/questionParser';
 import { extractTextFromWord, parseAllQuestions, downloadJson } from './utils/fileHandler';
 import { sendToApi } from './utils/apiClient';
+import { wrapWithProxy, DEFAULT_PROXY } from './utils/corsProxy';
 
 const WordToJsonConverter = () => {
   // State management
@@ -32,6 +33,7 @@ const WordToJsonConverter = () => {
   const [apiHeaders, setApiHeaders] = useState('{\n  "Content-Type": "application/json"\n}');
   const [apiResponse, setApiResponse] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [corsProxy, setCorsProxy] = useState(DEFAULT_PROXY); // Default: CORS Anywhere
 
   // Helper to get config object
   const getConfig = () => ({
@@ -181,7 +183,16 @@ const WordToJsonConverter = () => {
     setApiResponse('');
 
     try {
-      const result = await sendToApi(apiEndpoint, apiMethod, apiHeaders, jsonOutput);
+      // Wrap URL với CORS proxy nếu được chọn
+      const finalEndpoint = wrapWithProxy(apiEndpoint, corsProxy);
+
+      // Log để debug
+      if (corsProxy) {
+        console.log('Original URL:', apiEndpoint);
+        console.log('Proxied URL:', finalEndpoint);
+      }
+
+      const result = await sendToApi(finalEndpoint, apiMethod, apiHeaders, jsonOutput);
       setApiResponse(JSON.stringify(result, null, 2));
 
       if (result.ok) {
@@ -266,9 +277,11 @@ const WordToJsonConverter = () => {
               apiResponse={apiResponse}
               isSending={isSending}
               jsonOutput={jsonOutput}
+              corsProxy={corsProxy}
               onEndpointChange={setApiEndpoint}
               onMethodChange={setApiMethod}
               onHeadersChange={setApiHeaders}
+              onCorsProxyChange={setCorsProxy}
               onSend={handleSendToApi}
             />
           </div>

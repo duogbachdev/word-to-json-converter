@@ -1,5 +1,6 @@
 import React from 'react';
-import { Send } from 'lucide-react';
+import { Send, Shield } from 'lucide-react';
+import { CORS_PROXIES } from '../utils/corsProxy';
 
 const ApiSender = ({
   apiEndpoint,
@@ -8,9 +9,11 @@ const ApiSender = ({
   apiResponse,
   isSending,
   jsonOutput,
+  corsProxy,
   onEndpointChange,
   onMethodChange,
   onHeadersChange,
+  onCorsProxyChange,
   onSend
 }) => {
   return (
@@ -20,8 +23,61 @@ const ApiSender = ({
           <Send className="w-5 h-5 text-purple-600" />
           <h3 className="text-lg font-bold text-purple-900">🚀 Gửi trực tiếp đến API</h3>
         </div>
-        
+
         <div className="space-y-3">
+          {/* CORS Proxy Selector */}
+          <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="w-4 h-4 text-yellow-600" />
+              <label className="text-xs font-bold text-yellow-800">
+                🛡️ CORS Proxy (Bypass CORS restrictions):
+              </label>
+            </div>
+            <select
+              value={corsProxy}
+              onChange={(e) => onCorsProxyChange(e.target.value)}
+              className="w-full px-3 py-2 border border-yellow-300 rounded-lg text-sm bg-white"
+            >
+              <option value="">❌ Không dùng proxy (Direct - sẽ bị CORS)</option>
+              {CORS_PROXIES.map((proxy, idx) => (
+                <option key={idx} value={proxy.url}>
+                  {proxy.name} - {proxy.note}
+                </option>
+              ))}
+            </select>
+            {corsProxy ? (
+              <div className="mt-2 space-y-1">
+                <p className="text-xs text-yellow-700">
+                  ✅ URL sẽ được gửi qua: <code className="bg-yellow-100 px-1 rounded">{corsProxy}</code>
+                </p>
+                {corsProxy.includes('cors-anywhere.herokuapp.com') && (
+                  <div className="bg-yellow-100 border border-yellow-400 rounded p-2 mt-2">
+                    <p className="text-xs font-bold text-yellow-800 mb-1">
+                      ⚠️ Lần đầu sử dụng CORS Anywhere:
+                    </p>
+                    <ol className="text-xs text-yellow-700 ml-4 list-decimal space-y-1">
+                      <li>Mở link: <a
+                        href="https://cors-anywhere.herokuapp.com/corsdemo"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline hover:text-blue-800"
+                      >
+                        cors-anywhere.herokuapp.com/corsdemo
+                      </a></li>
+                      <li>Click nút "Request temporary access to the demo server"</li>
+                      <li>Quay lại đây và gửi request</li>
+                      <li>Access có hiệu lực vài giờ</li>
+                    </ol>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs text-red-600 mt-2">
+                ⚠️ Không dùng proxy sẽ gặp lỗi CORS khi gọi API cross-origin!
+              </p>
+            )}
+          </div>
+
           <div className="flex gap-2">
             <select
               value={apiMethod}

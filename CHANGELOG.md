@@ -1,5 +1,35 @@
 # Changelog - Word to JSON Converter
 
+## [2.1.0] - 2025-01-03
+
+### 🛡️ CORS Proxy Integration
+
+#### ✨ Tính năng mới
+
+**CORS Proxy Support:**
+- ✅ Tích hợp CORS proxy để bypass CORS restrictions
+- ✅ Dropdown chọn proxy (AllOrigins, CORS.SH, ThingProxy, CORS Anywhere)
+- ✅ Tự động wrap URL qua proxy server
+- ✅ Hỗ trợ cả GET và POST methods
+- ✅ UI màu vàng dễ nhận biết
+
+**Files mới:**
+- `src/utils/corsProxy.js` - CORS proxy utilities
+- `CORS_GUIDE.md` - Hướng dẫn chi tiết về CORS
+
+**Cập nhật:**
+- `src/components/ApiSender.js` - Thêm CORS proxy selector
+- `src/App.js` - Thêm state và logic cho CORS proxy
+- `README.md` - Thêm hướng dẫn CORS
+
+**Lợi ích:**
+- ✅ Không cần quyền sửa backend
+- ✅ Test API cross-origin dễ dàng
+- ✅ Giải quyết lỗi "blocked by CORS policy"
+- ✅ Nhiều proxy options để chọn
+
+---
+
 ## [2.0.0] - 2025-01-03
 
 ### 🎉 Major Refactoring & SEO Enhancement
